@@ -9,6 +9,52 @@ namespace MahApps.Metro.Controls.Dialogs
 {
     public static class DialogManager
     {
+        public static Task<object> ShowBaseMetroDialog(this MetroWindow window, BaseMetroDialog dialog)
+        {
+            window.Dispatcher.VerifyAccess();
+            return HandleOverlayOnShow(null, window).ContinueWith(z =>
+            {
+                return (Task<object>)window.Dispatcher.Invoke(new Func<Task<object>>(() =>
+                {
+                    SizeChangedEventHandler sizeHandler = SetupAndOpenDialog(window, dialog);
+                    dialog.SizeChangedHandler = sizeHandler;
+
+                    return dialog.WaitForLoadAsync().ContinueWith(x =>
+                    {
+                        if (DialogOpened != null)
+                        {
+                            window.Dispatcher.BeginInvoke(new Action(() => DialogOpened(window, new DialogStateChangedEventArgs())));
+                        }
+
+                        return dialog.WaitForButtonPressAsync().ContinueWith(y =>
+                        {
+                            //once a button as been clicked, begin removing the dialog.
+
+                            dialog.OnClose();
+
+                            if (DialogClosed != null)
+                            {
+                                window.Dispatcher.BeginInvoke(new Action(() => DialogClosed(window, new DialogStateChangedEventArgs())));
+                            }
+
+                            Task closingTask = (Task)window.Dispatcher.Invoke(new Func<Task>(() => dialog._WaitForCloseAsync()));
+                            return closingTask.ContinueWith(a =>
+                            {
+                                return ((Task)window.Dispatcher.Invoke(new Func<Task>(() =>
+                                {
+                                    window.SizeChanged -= sizeHandler;
+
+                                    window.RemoveDialog(dialog);
+
+                                    return HandleOverlayOnHide(null, window);
+                                }))).ContinueWith(y3 => y).Unwrap();
+                            });
+                        }).Unwrap();
+                    }).Unwrap().Unwrap();
+                }));
+            }).Unwrap();
+        }
+
         /// <summary>
         /// Creates a LoginDialog inside of the current window.
         /// </summary>
