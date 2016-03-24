@@ -93,11 +93,11 @@
                         </ContentControl.Foreground>
                     </ContentControl>
 
-                    <Thumb Grid.Row="0"
-                           Grid.Column="0"
-                           Grid.ColumnSpan="5"
-                           Style="{StaticResource WindowTitleThumbStyle}"
-                           x:Name="PART_WindowTitleThumb" />
+                    <Controls:MetroThumb Grid.Row="0"
+                                         Grid.Column="0"
+                                         Grid.ColumnSpan="5"
+                                         Style="{StaticResource WindowTitleThumbStyle}"
+                                         x:Name="PART_WindowTitleThumb" />
 
                     <!-- the right window commands -->
                     <ContentPresenter x:Name="PART_RightWindowCommands"
@@ -222,6 +222,9 @@
         
         <ControlTemplate.Triggers>
             <Trigger Property="UseNoneWindowStyle" Value="True">
+                <Setter TargetName="PART_WindowTitleThumb" Property="Grid.RowSpan" Value="2" />
+            </Trigger>
+            <Trigger Property="ShowTitleBar" Value="False">
                 <Setter TargetName="PART_WindowTitleThumb" Property="Grid.RowSpan" Value="2" />
             </Trigger>
             <!-- handle active/inactive state -->
@@ -374,11 +377,11 @@
                         </Label>
                     </Grid>
 
-                    <Thumb Grid.Row="0"
-                           Grid.Column="0"
-                           Grid.ColumnSpan="5"
-                           Style="{StaticResource WindowTitleThumbStyle}"
-                           x:Name="PART_WindowTitleThumb" />
+                    <Controls:MetroThumb Grid.Row="0"
+                                         Grid.Column="0"
+                                         Grid.ColumnSpan="5"
+                                         Style="{StaticResource WindowTitleThumbStyle}"
+                                         x:Name="PART_WindowTitleThumb" />
 
                     <!-- the right window commands -->
                     <ContentPresenter x:Name="PART_RightWindowCommands"
@@ -503,6 +506,9 @@
 
         <ControlTemplate.Triggers>
             <Trigger Property="UseNoneWindowStyle" Value="True">
+                <Setter TargetName="PART_WindowTitleThumb" Property="Grid.RowSpan" Value="2" />
+            </Trigger>
+            <Trigger Property="ShowTitleBar" Value="False">
                 <Setter TargetName="PART_WindowTitleThumb" Property="Grid.RowSpan" Value="2" />
             </Trigger>
             <!-- handle active/inactive state -->
